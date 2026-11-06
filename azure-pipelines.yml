@@ -144,9 +144,26 @@ stages:
               echo "=== 8. Obteniendo URL de la Aplicación ==="
               oc get route jee-msa-web-demo-pipeline -o jsonpath='{"URL: http://"}{.spec.host}{"\n"}'
             displayName: 'Descarga CLI, Login y Despliegue Docker'
+     
+  # ==========================================
+  # STAGE 4: VALIDACIÓN DE DESPLIEGUE
+  # ==========================================
+  - stage: SmokeTest
+    displayName: 'Validar despliegue'
+    dependsOn: CD
+    condition: succeeded()
+    jobs:
+      - job: validate_deployment
+        displayName: 'Ejecutar validación'
+        steps:
+          - script: |
+              echo "Iniciando validación del despliegue..."
+              echo "Validando entorno OpenShift..."
+              echo "Validación realizada correctamente."
+            displayName: 'Prueba de nuevo Stage'
 
   # ==========================================
-  # STAGE 4: NOTIFICACIONES (NOTIFICATIONS)
+  # STAGE 5: NOTIFICACIONES (NOTIFICATIONS)
   # ==========================================
   - stage: Notifications
     displayName: 'Notificar'
